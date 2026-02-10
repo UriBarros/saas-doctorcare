@@ -14,17 +14,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { LogIn, Menu } from "lucide-react";
 import { useState } from "react";
+import { useSession } from "next-auth/react"
+import { handleRegister } from "../_actions/login"
+
+
 
 export function Header(){
-
+  const {data: session, status} = useSession();
   const [isOpen, setIsOpen] = useState(false);
 
-  const session = null;
 
   const navItems = [
     { href: "#Profissionais", label: "Profissionais" },
     { href: "#Precos", label: "Preços" },
   ]
+
+  async function handleLogin() {
+    await handleRegister("github");
+  }
 
   const NavLinks = () => (
     <>
@@ -42,14 +49,17 @@ export function Header(){
         </Button>
       ))}
 
-      {session ? (
+      {status === "loading" ? (
+        <></>
+      ) : session ? (
         <Link
           href="/dashboard"
+          className="flex items-center justify-center gap-2 bg-zinc-900 text-white py-1 rounded-md px-4"
         >
           Painel do Profisional
         </Link>
       ) : (
-        <Button className="cursor-pointer">
+        <Button className="cursor-pointer" onClick={handleLogin}>
           <LogIn/>
           Fazer Login
         </Button>
